@@ -218,7 +218,7 @@ public class Datenbank {
 			conn = DriverManager.getConnection(CONNSTRING);
 			//PreparedStatement Objekt löschen
 			stmt = conn.prepareStatement(delete);
-			//Mitarbeiter Datensätze in die Mitarbeiter Tabelle einfügen
+			
 			stmt.setInt(1, id);
 
 			//SQL Kommando ausführen
@@ -1021,7 +1021,133 @@ public class Datenbank {
 		return dr;
 	}
 	
+	public static DatenbankReturnData <ArbeitszeitList> leseMitarbeiterArbeitszeitInZeitraum(int mitarbeiterId, LocalDate datumVon, LocalDate datumBis){
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		DatenbankReturnData<ArbeitszeitList> dr = new DatenbankReturnData<>();
+		ArbeitszeitList al = new ArbeitszeitList();
+		ArrayList<Arbeitszeit> arbeitszeiten = new ArrayList<>();
+		al.setArbeitszeiten(arbeitszeiten);
+		dr.setData(al);
+		String select = "SELECT * FROM " + " (((" + ARBEITSZEIT + " INNER JOIN " + MITARBEITER + " ON " + 
+		ARBEITSZEIT + "." + ARBEITSZEITMITARBEITERID + "=" + MITARBEITER + "." + ID + ")" +
+		" INNER JOIN " + PROJEKT + " ON " + 
+		ARBEITSZEIT + "." + ARBEITSZEITPROJEKTID + "=" + PROJEKT + "." + PROJEKTID + ")" +
+		" INNER JOIN " + AUFTRAGGEBER + " ON " + PROJEKT + "." + PROJEKTAUFTRAGGEBERID + "=" + 
+		AUFTRAGGEBER + "." + AUFTRAGGEBERID + ")" + " WHERE " + MITARBEITER + "." + ID + " =? AND " + ARBEITSZEIT + "." + ARBEITSZEITDATUM +
+		" BETWEEN ? AND ? ";
+
+		try {
+			conn = DriverManager.getConnection(CONNSTRING);
+			stmt = conn.prepareStatement(select);
+			
+			if(mitarbeiterId != 0 && datumVon != null && datumBis != null) {
+				stmt.setInt(1, mitarbeiterId);
+				LocalDateTime dtVon = LocalDateTime.of(datumVon, LocalTime.of(0, 0, 0, 0));
+				java.sql.Date dateVon = new java.sql.Date(dtVon.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
+				stmt.setDate(2, dateVon);
+				LocalDateTime dtBis = LocalDateTime.of(datumBis, LocalTime.of(0, 0, 0, 0));
+				java.sql.Date dateBis = new java.sql.Date(dtBis.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
+				stmt.setDate(3, dateBis);
+				
+			}
+			
+			//Arbeitszeit Datensätze einlesen, Arbeitszeit Objekte erzeugen und in ArrayList speichern	
+			rs = stmt.executeQuery();		
+			while(rs.next()) {
+				arbeitszeiten.add(new Arbeitszeit(rs.getInt(ZEILENNUMMER), rs.getDate(ARBEITSZEITDATUM).toLocalDate(), 
+						new Mitarbeiter(rs.getInt(ID), rs.getString(NAME), rs.getString(ADRESSE), rs.getDate(GEBURTSDAT).toLocalDate(), rs.getString(SVNUMMER),
+								rs.getString(TELEFON), rs.getString(EMAIL), rs.getDouble(WOCHENARBEITSZEIT), rs.getDouble(STUNDENSATZ)), 
+						new Projekt(rs.getInt(PROJEKTID), new Auftraggeber(rs.getInt(AUFTRAGGEBERID), rs.getString(AUFTRAGGEBERNAME), rs.getString(AUFTRAGGEBERADRESSE), rs.getString(AUFTRAGGEBERTELEFON), rs.getString(AUFTRAGGEBEREMAIL)),  rs.getString(PROJEKTNAME), rs.getString(PROJEKTADRESSE), 
+						rs.getString(PROJEKTTELEFON), rs.getString(PROJEKTKONTAKTPERSON), rs.getBoolean(ABGESCHLOSSEN)),
+						rs.getString(ARBEITSZEITVON), rs.getString(ARBEITSZEITBIS), rs.getDouble(STUNDENGESAMT), rs.getDouble(ARBEITSZEITSTUNDENSATZ), rs.getBoolean(FAKTURIERT)));
+			}
+			rs.close();
+			dr.setRc(true);
+		} 
+		catch (SQLException e) {
+			dr.setMeldung(e.toString());
+		}
+		finally {
+			try {
+				if(stmt != null)
+					stmt.close();
+				if(conn != null)
+					conn.close();
+				
+			} catch (SQLException e) {
+				dr.setMeldung(e.toString());
+			}
+		}
+		return dr;
+
+	}
 	
+	
+	public static DatenbankReturnData <ArbeitszeitList> leseProjektArbeitszeitInZeitraum(int projektId, LocalDate datumVon, LocalDate datumBis){
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		DatenbankReturnData<ArbeitszeitList> dr = new DatenbankReturnData<>();
+		ArbeitszeitList al = new ArbeitszeitList();
+		ArrayList<Arbeitszeit> arbeitszeiten = new ArrayList<>();
+		al.setArbeitszeiten(arbeitszeiten);
+		dr.setData(al);
+		String select = "SELECT * FROM " + " (((" + ARBEITSZEIT + " INNER JOIN " + MITARBEITER + " ON " + 
+		ARBEITSZEIT + "." + ARBEITSZEITMITARBEITERID + "=" + MITARBEITER + "." + ID + ")" +
+		" INNER JOIN " + PROJEKT + " ON " + 
+		ARBEITSZEIT + "." + ARBEITSZEITPROJEKTID + "=" + PROJEKT + "." + PROJEKTID + ")" +
+		" INNER JOIN " + AUFTRAGGEBER + " ON " + PROJEKT + "." + PROJEKTAUFTRAGGEBERID + "=" + 
+		AUFTRAGGEBER + "." + AUFTRAGGEBERID + ")" + " WHERE " + PROJEKT + "." + PROJEKTID + " =? AND " + ARBEITSZEIT + "." + ARBEITSZEITDATUM +
+		" BETWEEN ? AND ? ";
+
+		try {
+			conn = DriverManager.getConnection(CONNSTRING);
+			stmt = conn.prepareStatement(select);
+			
+			if(projektId != 0 && datumVon != null && datumBis != null) {
+				stmt.setInt(1, projektId);
+				LocalDateTime dtVon = LocalDateTime.of(datumVon, LocalTime.of(0, 0, 0, 0));
+				java.sql.Date dateVon = new java.sql.Date(dtVon.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
+				stmt.setDate(2, dateVon);
+				LocalDateTime dtBis = LocalDateTime.of(datumBis, LocalTime.of(0, 0, 0, 0));
+				java.sql.Date dateBis = new java.sql.Date(dtBis.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
+				stmt.setDate(3, dateBis);
+				
+			}
+			
+			//Arbeitszeit Datensätze einlesen, Arbeitszeit Objekte erzeugen und in ArrayList speichern	
+			rs = stmt.executeQuery();		
+			while(rs.next()) {
+				arbeitszeiten.add(new Arbeitszeit(rs.getInt(ZEILENNUMMER), rs.getDate(ARBEITSZEITDATUM).toLocalDate(), 
+						new Mitarbeiter(rs.getInt(ID), rs.getString(NAME), rs.getString(ADRESSE), rs.getDate(GEBURTSDAT).toLocalDate(), rs.getString(SVNUMMER),
+								rs.getString(TELEFON), rs.getString(EMAIL), rs.getDouble(WOCHENARBEITSZEIT), rs.getDouble(STUNDENSATZ)), 
+						new Projekt(rs.getInt(PROJEKTID), new Auftraggeber(rs.getInt(AUFTRAGGEBERID), rs.getString(AUFTRAGGEBERNAME), rs.getString(AUFTRAGGEBERADRESSE), rs.getString(AUFTRAGGEBERTELEFON), rs.getString(AUFTRAGGEBEREMAIL)),  rs.getString(PROJEKTNAME), rs.getString(PROJEKTADRESSE), 
+						rs.getString(PROJEKTTELEFON), rs.getString(PROJEKTKONTAKTPERSON), rs.getBoolean(ABGESCHLOSSEN)),
+						rs.getString(ARBEITSZEITVON), rs.getString(ARBEITSZEITBIS), rs.getDouble(STUNDENGESAMT), rs.getDouble(ARBEITSZEITSTUNDENSATZ), rs.getBoolean(FAKTURIERT)));
+			}
+			rs.close();
+			dr.setRc(true);
+		} 
+		catch (SQLException e) {
+			dr.setMeldung(e.toString());
+		}
+		finally {
+			try {
+				if(stmt != null)
+					stmt.close();
+				if(conn != null)
+					conn.close();
+				
+			} catch (SQLException e) {
+				dr.setMeldung(e.toString());
+			}
+		}
+		return dr;
+
+	}
+
 
 
 

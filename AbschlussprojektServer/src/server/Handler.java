@@ -6,6 +6,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.URI;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
@@ -237,6 +239,44 @@ public class Handler implements HttpHandler {
 				response = new Meldung(dr.getMeldung()).toXML();
 			}
 		}
+		else if(paths.length == 4 && paths[0].equals("mitarbeiterarbeitszeitlist")) {
+
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+			LocalDate von = LocalDate.parse(paths[2], formatter);
+			LocalDate bis = LocalDate.parse(paths[3], formatter);
+			
+			DatenbankReturnData<ArbeitszeitList> dr = Datenbank.leseMitarbeiterArbeitszeitInZeitraum(Integer.parseInt(paths[1]), von, bis);
+			if(dr.isRc()) {
+
+				response = dr.getData().toXML();
+			}
+			else {
+				// Fehler, daher Statuscode ändern und Exception Text mit einer Meldung in XML Darstellung verwandeln
+				statusCode = 500;
+				response = new Meldung(dr.getMeldung()).toXML();
+			}
+
+
+		}
+		else if(paths.length == 4 && paths[0].equals("projektarbeitszeitlist")) {
+
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+			LocalDate von = LocalDate.parse(paths[2], formatter);
+			LocalDate bis = LocalDate.parse(paths[3], formatter);
+			
+			DatenbankReturnData<ArbeitszeitList> dr = Datenbank.leseProjektArbeitszeitInZeitraum(Integer.parseInt(paths[1]), von, bis);
+			if(dr.isRc()) {
+
+				response = dr.getData().toXML();
+			}
+			else {
+				// Fehler, daher Statuscode ändern und Exception Text mit einer Meldung in XML Darstellung verwandeln
+				statusCode = 500;
+				response = new Meldung(dr.getMeldung()).toXML();
+			}
+
+
+		}
 		else {
 			statusCode = 400;
 			response = new Meldung("Falsche URI").toXML();
@@ -291,7 +331,7 @@ public class Handler implements HttpHandler {
 				response = new Meldung(dr.getMeldung()).toXML();
 			}
 		}
-		
+
 		else {
 			statusCode = 400;
 			response = new Meldung("Falsche URI").toXML();
