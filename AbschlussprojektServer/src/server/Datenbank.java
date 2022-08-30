@@ -23,9 +23,12 @@ import klassen.ProjektList;
 
 
 public class Datenbank {
+	
+	//Instanzvariablen für Datenbankverbindung
 	private static final String DBLOCATION = "C:\\Evi\\JavaWifi\\Abschlussprojekt\\Datenbank";
 	private static final String CONNSTRING = "jdbc:derby:" + DBLOCATION + ";create=true";
 
+	//Instanzvariablen für Mitarbeitertabelle
 	private static final String MITARBEITER = "Mitarbeiter";
 	private static final String ID = "Id";
 	private static final String NAME = "Name";
@@ -37,6 +40,7 @@ public class Datenbank {
 	private static final String WOCHENARBEITSZEIT = "Wochenarbeitszeit";
 	private static final String STUNDENSATZ = "Stundensatz";
 	
+	//Instanzvariablen für Auftraggebertabelle
 	private static final String AUFTRAGGEBER = "Auftraggeber";
 	private static final String AUFTRAGGEBERID = "AuftraggeberId";
 	private static final String AUFTRAGGEBERNAME = "AuftraggeberName";
@@ -44,6 +48,7 @@ public class Datenbank {
 	private static final String AUFTRAGGEBERTELEFON = "AuftraggeberTelefon";
 	private static final String AUFTRAGGEBEREMAIL = "AuftraggeberEmail";
 	
+	//Instanzvariablen für Projekttabelle
 	private static final String PROJEKT = "Projekt";
 	private static final String PROJEKTID = "ProjektId";
 	private static final String PROJEKTNAME = "ProjektName";
@@ -53,6 +58,7 @@ public class Datenbank {
 	private static final String PROJEKTAUFTRAGGEBERID = "ProjektAuftraggeberId";
 	private static final String ABGESCHLOSSEN = "Abgeschlossen";
 	
+	//Instanzvariablen für Arbeitszeittabelle
 	private static final String ARBEITSZEIT = "Arbeitszeit";
 	private static final String ZEILENNUMMER = "Zeilennummer";
 	private static final String ARBEITSZEITDATUM = "ArbeitszeitDatum";
@@ -67,6 +73,7 @@ public class Datenbank {
 
 	//MITARBEITER
 	
+	//Mitarbeitertabelle erstellen
 	public static DatenbankReturn createTableMitarbeiter() {
 		Connection conn = null;
 		Statement stmt = null;
@@ -119,7 +126,9 @@ public class Datenbank {
 		}
 		return dr;
 	}
+	
 
+	//Mitarbeiterliste lesen
 	public static DatenbankReturnData <MitarbeiterList> leseMitarbeiter(){
 		Connection conn = null;
 		PreparedStatement stmt = null;
@@ -160,7 +169,7 @@ public class Datenbank {
 
 	}
 
-
+	//Mitarbeiter einfügen
 	public static DatenbankReturn insertMitarbeiter (Mitarbeiter mitarbeiter) {
 		DatenbankReturn dr = new DatenbankReturn();
 		Connection conn = null;
@@ -207,6 +216,7 @@ public class Datenbank {
 
 	}
 
+	//Mitarbeiter löschen
 	public static DatenbankReturn deleteMitarbeiter(int id) {
 
 		DatenbankReturn dr = new DatenbankReturn();
@@ -245,6 +255,7 @@ public class Datenbank {
 
 	}
 
+	//Mitarbeiter aktualisieren
 	public static DatenbankReturn updateMitarbeiter(Mitarbeiter mitarbeiter) {
 		DatenbankReturn dr = new DatenbankReturn();
 		Connection conn = null;
@@ -304,6 +315,7 @@ public class Datenbank {
 	
 	//AUFTRAGGEBER
 	
+	//Auftraggebertabelle erstellen
 	public static DatenbankReturn createTableAuftraggeber() {
 		Connection conn = null;
 		Statement stmt = null;
@@ -356,6 +368,7 @@ public class Datenbank {
 		return dr;
 	}
 
+	//Auftraggebertabelle lesen
 	public static DatenbankReturnData <AuftraggeberList> leseAuftraggeber(){
 		Connection conn = null;
 		PreparedStatement stmt = null;
@@ -396,7 +409,7 @@ public class Datenbank {
 
 	}
 
-
+	//Auftraggeber einfügen
 	public static DatenbankReturn insertAuftraggeber (Auftraggeber auftraggeber) {
 		DatenbankReturn dr = new DatenbankReturn();
 		Connection conn = null;
@@ -437,6 +450,7 @@ public class Datenbank {
 
 	}
 	
+	//Auftraggeber löschen
 	public static DatenbankReturn deleteAuftraggeber(int id) {
 
 		DatenbankReturn dr = new DatenbankReturn();
@@ -476,6 +490,7 @@ public class Datenbank {
 
 	}
 	
+	//Auftraggeber aktualisieren
 	public static DatenbankReturn updateAuftraggeber(Auftraggeber auftraggeber) {
 		DatenbankReturn dr = new DatenbankReturn();
 		Connection conn = null;
@@ -491,7 +506,7 @@ public class Datenbank {
 			conn = DriverManager.getConnection(CONNSTRING);
 			//PreparedStatement Objekt erzeugen
 			stmt = conn.prepareStatement(update);
-			//Mitarbeiter Datensätze in die Wein Tabelle einfügen
+			//Auftraggeber Datensätze in die Tabelle einfügen
 
 			stmt.setString(1, auftraggeber.getName());
 			stmt.setString(2, auftraggeber.getAdresse());
@@ -521,11 +536,10 @@ public class Datenbank {
 		}
 		return dr;
 	}
-	
-
 
 	//PROJEKT
 	
+	//Projekttabelle erstellen
 	public static DatenbankReturn createTableProjekt() {
 		Connection conn = null;
 		Statement stmt = null;
@@ -581,6 +595,7 @@ public class Datenbank {
 		return dr;
 	}
 
+	//Projekttabelle lesen
 	public static DatenbankReturnData <ProjektList> leseProjekt(){
 		Connection conn = null;
 		PreparedStatement stmt = null;
@@ -622,7 +637,7 @@ public class Datenbank {
 
 	}
 
-
+	//Projekt einfügen
 	public static DatenbankReturn insertProjekt (Projekt projekt) {
 		DatenbankReturn dr = new DatenbankReturn();
 		Connection conn = null;
@@ -670,6 +685,7 @@ public class Datenbank {
 
 	}
 	
+	//Projekt löschen
 	public static DatenbankReturn deleteProjekt(int id) {
 
 		DatenbankReturn dr = new DatenbankReturn();
@@ -709,6 +725,7 @@ public class Datenbank {
 
 	}
 	
+	//Projekt aktualisieren
 	public static DatenbankReturn updateProjekt(Projekt projekt) {
 		DatenbankReturn dr = new DatenbankReturn();
 		Connection conn = null;
@@ -763,7 +780,7 @@ public class Datenbank {
 	
 	//ARBEITSZEIT
 	
-	
+	//Arbeitszeittabelle erstellen
 	public static DatenbankReturn createTableArbeitszeit() {
 		Connection conn = null;
 		Statement stmt = null;
@@ -822,6 +839,7 @@ public class Datenbank {
 		return dr;
 	}
 
+	//Arbeitszeittabelle lesen
 	public static DatenbankReturnData <ArbeitszeitList> leseArbeitszeit(){
 		Connection conn = null;
 		PreparedStatement stmt = null;
@@ -871,7 +889,7 @@ public class Datenbank {
 
 	}
 
-
+	//Arbeitszeitzeile einfügen
 	public static DatenbankReturn insertArbeitszeit (Arbeitszeit arbeitszeit) {
 		
 		DatenbankReturn dr = new DatenbankReturn();
@@ -926,6 +944,7 @@ public class Datenbank {
 
 	}
 	
+	//Arbeitszeitzeile löschen
 	public static DatenbankReturn deleteArbeitszeit(int id) {
 
 		DatenbankReturn dr = new DatenbankReturn();
@@ -965,6 +984,7 @@ public class Datenbank {
 
 	}
 	
+	//Arbeitszeitzeile aktualisieren
 	public static DatenbankReturn updateArbeitszeit(Arbeitszeit arbeitszeit) {
 		DatenbankReturn dr = new DatenbankReturn();
 		Connection conn = null;
@@ -993,9 +1013,10 @@ public class Datenbank {
 			stmt.setInt(3, arbeitszeit.getProjekt().getId());
 			stmt.setString(4, arbeitszeit.getVon());
 			stmt.setString(5, arbeitszeit.getBis());
-			stmt.setDouble(6, arbeitszeit.getStundensatz());
-			stmt.setBoolean(7, arbeitszeit.isFakturiert());
-			stmt.setInt(8, arbeitszeit.getZeilennummer());
+			stmt.setDouble(6, arbeitszeit.getStundengesamt());
+			stmt.setDouble(7, arbeitszeit.getStundensatz());
+			stmt.setBoolean(8, arbeitszeit.isFakturiert());
+			stmt.setInt(9, arbeitszeit.getZeilennummer());
 
 			
 			//SQL Kommando ausführen
@@ -1021,6 +1042,7 @@ public class Datenbank {
 		return dr;
 	}
 	
+	//Arbeitszeiten eines Mitarbeiters für einen ausgewählten Zeitraum auflisten
 	public static DatenbankReturnData <ArbeitszeitList> leseMitarbeiterArbeitszeitInZeitraum(int mitarbeiterId, LocalDate datumVon, LocalDate datumBis){
 		Connection conn = null;
 		PreparedStatement stmt = null;
@@ -1052,8 +1074,7 @@ public class Datenbank {
 				stmt.setDate(3, dateBis);
 				
 			}
-			
-			//Arbeitszeit Datensätze einlesen, Arbeitszeit Objekte erzeugen und in ArrayList speichern	
+				
 			rs = stmt.executeQuery();		
 			while(rs.next()) {
 				arbeitszeiten.add(new Arbeitszeit(rs.getInt(ZEILENNUMMER), rs.getDate(ARBEITSZEITDATUM).toLocalDate(), 
@@ -1084,8 +1105,9 @@ public class Datenbank {
 
 	}
 	
-	
-	public static DatenbankReturnData <ArbeitszeitList> leseProjektArbeitszeitInZeitraum(int projektId, LocalDate datumVon, LocalDate datumBis){
+	//Arbeitszeiten eines Projektes für einen bestimmten Zeitraum auflisten
+	//Falls NICHT alle aufgelistet werden soll, dann fakturiert / nicht fakturiert berücksichtigen
+	public static DatenbankReturnData <ArbeitszeitList> leseProjektArbeitszeitInZeitraum(int projektId, LocalDate datumVon, LocalDate datumBis, String fakturiert){
 		Connection conn = null;
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
@@ -1094,6 +1116,7 @@ public class Datenbank {
 		ArrayList<Arbeitszeit> arbeitszeiten = new ArrayList<>();
 		al.setArbeitszeiten(arbeitszeiten);
 		dr.setData(al);
+		Boolean isFakturiert = null;
 		String select = "SELECT * FROM " + " (((" + ARBEITSZEIT + " INNER JOIN " + MITARBEITER + " ON " + 
 		ARBEITSZEIT + "." + ARBEITSZEITMITARBEITERID + "=" + MITARBEITER + "." + ID + ")" +
 		" INNER JOIN " + PROJEKT + " ON " + 
@@ -1101,6 +1124,16 @@ public class Datenbank {
 		" INNER JOIN " + AUFTRAGGEBER + " ON " + PROJEKT + "." + PROJEKTAUFTRAGGEBERID + "=" + 
 		AUFTRAGGEBER + "." + AUFTRAGGEBERID + ")" + " WHERE " + PROJEKT + "." + PROJEKTID + " =? AND " + ARBEITSZEIT + "." + ARBEITSZEITDATUM +
 		" BETWEEN ? AND ? ";
+		if(!fakturiert.equals("alle")) {
+			select = select + "AND " + ARBEITSZEIT + "." + FAKTURIERT + " = ?";
+			if(fakturiert.equals("nichtFakturiert")) {
+				isFakturiert = false;
+			}
+			else {
+				isFakturiert = true;
+			}
+		}
+		
 
 		try {
 			conn = DriverManager.getConnection(CONNSTRING);
@@ -1114,10 +1147,12 @@ public class Datenbank {
 				LocalDateTime dtBis = LocalDateTime.of(datumBis, LocalTime.of(0, 0, 0, 0));
 				java.sql.Date dateBis = new java.sql.Date(dtBis.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
 				stmt.setDate(3, dateBis);
+				if(isFakturiert != null) {
+					stmt.setBoolean(4, isFakturiert);
+				}
 				
 			}
 			
-			//Arbeitszeit Datensätze einlesen, Arbeitszeit Objekte erzeugen und in ArrayList speichern	
 			rs = stmt.executeQuery();		
 			while(rs.next()) {
 				arbeitszeiten.add(new Arbeitszeit(rs.getInt(ZEILENNUMMER), rs.getDate(ARBEITSZEITDATUM).toLocalDate(), 
@@ -1147,8 +1182,5 @@ public class Datenbank {
 		return dr;
 
 	}
-
-
-
 
 }

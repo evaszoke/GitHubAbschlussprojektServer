@@ -78,7 +78,8 @@ public class Handler implements HttpHandler {
 
 	}
 
-	/*
+	/*	POST Methode
+	 * 
 	 *    /mitarbeiter
 	 *    
 	 *    /auftraggeber
@@ -179,7 +180,8 @@ public class Handler implements HttpHandler {
 
 	}
 
-	/*
+	/*	GET Methode
+	 * 
 	 *   /mitarbeiterlist
 	 *   
 	 *   /auftraggeberlist
@@ -187,6 +189,10 @@ public class Handler implements HttpHandler {
 	 *   /projektlist
 	 *   
 	 *   /arbeitszeitlist
+	 *   
+	 *   /mitarbeiterarbeitszeitlist/id/datumvon/datumbis
+	 *   
+	 *   /projektarbeitszeitlist/id/datumvon/datumbis
 	 */
 	private void get(HttpExchange exchange, String[] paths) {
 		int statusCode = 200;
@@ -258,13 +264,14 @@ public class Handler implements HttpHandler {
 
 
 		}
-		else if(paths.length == 4 && paths[0].equals("projektarbeitszeitlist")) {
+		else if(paths.length == 5 && paths[0].equals("projektarbeitszeitlist")) {
 
 			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 			LocalDate von = LocalDate.parse(paths[2], formatter);
 			LocalDate bis = LocalDate.parse(paths[3], formatter);
 			
-			DatenbankReturnData<ArbeitszeitList> dr = Datenbank.leseProjektArbeitszeitInZeitraum(Integer.parseInt(paths[1]), von, bis);
+			DatenbankReturnData<ArbeitszeitList> dr = Datenbank.leseProjektArbeitszeitInZeitraum(Integer.parseInt(paths[1]),
+					von, bis, paths[4]);
 			if(dr.isRc()) {
 
 				response = dr.getData().toXML();
@@ -285,7 +292,8 @@ public class Handler implements HttpHandler {
 
 	}
 
-	/*
+	/* DELETE Methode
+	 * 
 	 *    /mitarbeiter/id
 	 *    
 	 *    /auftraggeber/id
@@ -340,6 +348,17 @@ public class Handler implements HttpHandler {
 
 	}
 
+	/* PUT Methode
+	 * 
+	 *    /mitarbeiter/id
+	 *    
+	 *    /auftraggeber/id
+	 *    
+	 *    /projekt/id
+	 *    
+	 *    /arbeitszeit/id
+	 *    
+	 */
 	private void put(HttpExchange exchange, String[] paths) {
 		int statusCode = 201;
 		String response = "";
@@ -390,7 +409,7 @@ public class Handler implements HttpHandler {
 			try {
 				//XML String aus request body lesen
 				String xmlLine = br.readLine();
-				//Auftraggeber in xml String deserialisieren
+				//Projekt in xml String deserialisieren
 				Projekt pr = new Projekt(xmlLine);
 				DatenbankReturn dr = Datenbank.updateProjekt(pr);
 				if(!dr.isRc()) {
@@ -410,7 +429,7 @@ public class Handler implements HttpHandler {
 			try {
 				//XML String aus request body lesen
 				String xmlLine = br.readLine();
-				//Auftraggeber in xml String deserialisieren
+				//Arbeitszeit in xml String deserialisieren
 				Arbeitszeit az = new Arbeitszeit(xmlLine);
 				DatenbankReturn dr = Datenbank.updateArbeitszeit(az);
 				if(!dr.isRc()) {
